@@ -1,0 +1,36 @@
+From ddff37fe8574aaf0688c106f1b8172349b9e4129 Mon Sep 17 00:00:00 2001
+From: Mirza Krak <mirza.krak@northern.tech>
+Date: Mon, 1 Jul 2019 10:54:43 +0000
+Subject: [PATCH 6/6] RockPro64 eMMC integration for Mender
+
+Signed-off-by: Mirza Krak <mirza.krak@northern.tech>
+---
+ include/config_mender_defines.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/include/config_mender_defines.h b/include/config_mender_defines.h
+index 9e9b91760a..6a3dad76ff 100644
+--- a/include/config_mender_defines.h
++++ b/include/config_mender_defines.h
+@@ -12,14 +12,14 @@
+ #define MENDER_ROOTFS_PART_B_NUMBER 3
+ #define MENDER_ROOTFS_PART_B_NUMBER_HEX 3
+ #define MENDER_UBOOT_STORAGE_INTERFACE "mmc"
+-#define MENDER_UBOOT_STORAGE_DEVICE 1
++#define MENDER_UBOOT_STORAGE_DEVICE 0
+ 
+ /* BB variables. */
+-#define MENDER_STORAGE_DEVICE_BASE "/dev/mmcblk1p"
++#define MENDER_STORAGE_DEVICE_BASE "/dev/mmcblk2p"
+ #define MENDER_UBOOT_ENV_STORAGE_DEVICE_OFFSET_1 0x400000
+ #define MENDER_UBOOT_ENV_STORAGE_DEVICE_OFFSET_2 0x800000
+-#define MENDER_ROOTFS_PART_A_NAME "/dev/mmcblk1p2"
+-#define MENDER_ROOTFS_PART_B_NAME "/dev/mmcblk1p3"
++#define MENDER_ROOTFS_PART_A_NAME "/dev/mmcblk2p2"
++#define MENDER_ROOTFS_PART_B_NAME "/dev/mmcblk2p3"
+ 
+ /* For sanity checks. */
+ #define MENDER_BOOTENV_SIZE 0x8000
+-- 
+2.11.0
+
