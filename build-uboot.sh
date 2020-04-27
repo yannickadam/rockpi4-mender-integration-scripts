@@ -39,7 +39,7 @@ aarch64-linux-gnu-gcc --version
 
 # Fresh clone
 rm -rf rockpi4-uboot
-git clone https://github.com/ayufan-rock64/linux-u-boot -b rockchip-master rockpro64-uboot
+git clone https://github.com/ayufan-rock64/linux-u-boot -b rockchip-master rockpi4-uboot
 cd rockpi4-uboot
 
 # Get u-boot base version
