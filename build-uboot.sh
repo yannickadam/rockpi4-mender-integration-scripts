@@ -58,7 +58,7 @@ if [ "$rockpi4_config" == "emmc" ]; then
     git am ../patches/0006-RockPi4-eMMC-integration-for-Mender.patch
 fi
 git apply ../patches/0007-RockPi4-boot-order.patch
-git apply ../patches/0008-RockPi4-config-env.patch
+git apply ../patches/0009-RockPi4-defconfig.patch
 git apply ../patches/0010-enable-DT-overlay.patch
 
 
@@ -101,7 +101,7 @@ fi
 if test "${logo}" = "disabled"; then setenv logo "logo.nologo"; fi
 
 if test "${console}" = "display" || test "${console}" = "both"; then setenv consoleargs "console=tty1"; fi
-if test "${console}" = "serial" || test "${console}" = "both"; then setenv consoleargs "${consolearg} console=ttyS2,1500000n8"; fi
+if test "${console}" = "serial" || test "${console}" = "both"; then setenv consoleargs "${consoleargs} console=ttyS2,1500000n8"; fi
 
 setenv verbosity "7"
 
