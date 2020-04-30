@@ -1,11 +1,11 @@
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 84462f3b6a..a62e81c2e6 100644
+index bbb1e2738b..f74ea8b424 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -1123,6 +1123,8 @@ config ARCH_ROCKCHIP
+@@ -1647,6 +1647,8 @@ config ARCH_ROCKCHIP
+ 	imply SYS_NS16550
  	imply TPL_SYSRESET
- 	imply ADC
- 	imply SARADC_ROCKCHIP
+ 	imply USB_FUNCTION_FASTBOOT
 +        select OF_LIBFDT
 +        select OF_LIBFDT_OVERLAY
  

@@ -1,0 +1,13 @@
+diff --git a/env/mmc.c b/env/mmc.c
+index 251ad07d7c..75e7fa77dd 100644
+--- a/env/mmc.c
++++ b/env/mmc.c
+@@ -217,7 +217,7 @@ static int env_mmc_save(void)
+ 		goto fini;
+ 	}
+ 
+-	printf("Writing to %sMMC(%d)... ", copy ? "redundant " : "", dev);
++	printf("Writing to %sMMC(%d) at offset 0x%x.", copy ? "redundant " : "", dev, offset);
+ 	if (write_env(mmc, CONFIG_ENV_SIZE, offset, (u_char *)env_new)) {
+ 		puts("failed\n");
+ 		ret = 1;

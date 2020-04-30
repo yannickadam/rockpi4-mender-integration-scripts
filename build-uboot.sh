@@ -39,39 +39,41 @@ aarch64-linux-gnu-gcc --version
 
 # Fresh clone
 rm -rf rockpi4-uboot
-git clone https://github.com/ayufan-rock64/linux-u-boot -b rockchip-master rockpi4-uboot
+git clone https://github.com/u-boot/u-boot.git -b v2020.04 rockpi4-uboot
 cd rockpi4-uboot
 
 # Get u-boot base version
 uboot_version=$(git describe --tags | sed 's/\([0-9]\{4\}\.[0-9]\{2\}\).*/\1/')
 
 # Apply Mender integration patches
-git am ../patches/0001-Add-missing-header-which-fails-on-recent-GCC.patch
-git am ../patches/0001-ayufan-rockpi-Match-upstream-naming.patch
 git am ../patches/0002-Generic-boot-code-for-Mender.patch
-git am ../patches/0003-Integration-of-Mender-boot-code-into-U-Boot.patch
+git apply ../patches/0003-Integration-of-Mender-boot-code-into-U-Boot.patch
 git am ../patches/0004-add-config_mender_defines.h.patch
-git am ../patches/0005-configs-rockpro64-add-Mender-support.patch
+git apply ../patches/0005-configs-rockpi4-add-Mender-support.patch
 # Comment below if you would like to generate binaries suitable for booting
 # from SD card instead of eMMC
 if [ "$rockpi4_config" == "emmc" ]; then
     git am ../patches/0006-RockPi4-eMMC-integration-for-Mender.patch
 fi
 git apply ../patches/0007-RockPi4-boot-order.patch
-git apply ../patches/0009-RockPi4-defconfig.patch
 git apply ../patches/0010-enable-DT-overlay.patch
+git apply ../patches/0011-env-display-offset.patch
+git apply ../patches/0012-remove-wrong-env-dev.patch
 
 
 git clone https://github.com/armbian/rkbin -b master rkbin-tools
 
-make rockpi4b-rk3399_defconfig
-make BL31=rkbin-tools/rk33/rk3399_bl31_v1.17.elf u-boot-dtb.bin spl/u-boot-spl.bin u-boot.itb
+make rock-pi-4-rk3399_defconfig
+make BL31=rkbin-tools/rk33/rk3399_bl31_v1.30.elf idbloader.img u-boot.itb
 make envtools
 
-# Copied from https://github.com/armbian/build/blob/master/config/sources/rockchip64.conf
-tools/mkimage -n rk3399 -T rksd -d rkbin-tools/rk33/rk3399_ddr_933MHz_v1.13.bin rksd_loader.img
-cat spl/u-boot-spl.bin >> rksd_loader.img
-dd if=u-boot.itb of=rksd_loader.img seek=448 conv=notrunc
+# Original code to have a working bootloader 
+# dd if=idbloader.img of=rockpi4-uboot.img seek=64 conv=notrunc
+# dd if=u-boot.itb of=rockpi4-uboot.img seek=16384 conv=notrunc
+
+# Code to work with mender-convert
+dd if=idbloader.img of=rockpi4-uboot.img seek=0 conv=notrunc
+dd if=u-boot.itb of=rockpi4-uboot.img seek=16320 conv=notrunc
 
 # This script is copied from an stock Armbian image and has been modified
 # slightly to work with Mender.
@@ -155,13 +157,13 @@ mkimage -C none -A arm -T script -d boot.cmd boot.scr
 
 cat <<- EOF > fw_env.config
 /dev/mmcblk0 0x400000 0x8000
-/dev/mmcblk0 0x800000 0x8000
+/dev/mmcblk0 0x600000 0x8000
 EOF
 
 cp rksd_loader.img boot.scr tools/env/fw_printenv fw_env.config $OLDPWD/
 cd -
-pwd
-tar czvf rockpi4_${rockpi4_config}-${uboot_version}.tar.gz ./*
+pwd 
+tar czvf rockpi4_${rockpi4_config}-${uboot_version}.tar.gz rksd_loader.img boot.scr fw_printenv fw_env.config
 
 # Writing the image to SD/eMMC
 #dd if=$1/rksd_loader.img of=$2 seek=64 conv=notrunc status=none >/dev/null 2>&

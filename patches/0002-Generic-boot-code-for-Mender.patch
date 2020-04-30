@@ -7,9 +7,9 @@ Signed-off-by: Maciej Borzecki <maciej.borzecki@rndity.com>
 Signed-off-by: Drew Moseley <drew.moseley@northern.tech>
 Signed-off-by: Kristian Amlie <kristian.amlie@northern.tech>
 ---
- include/config_mender.h |  98 +++++++++++++++++++++++++++++++
+ include/config_mender.h |  99 +++++++++++++++++++++++++++++++
  include/env_mender.h    | 152 ++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 250 insertions(+)
+ 2 files changed, 251 insertions(+)
  create mode 100644 include/config_mender.h
  create mode 100644 include/env_mender.h
 
@@ -18,7 +18,7 @@ new file mode 100644
 index 0000000000..3836a6ddd4
 --- /dev/null
 +++ b/include/config_mender.h
-@@ -0,0 +1,98 @@
+@@ -0,0 +1,99 @@
 +/*
 +  Copyright 2017 Northern.tech AS
 +
@@ -75,6 +75,7 @@ index 0000000000..3836a6ddd4
 +#  define CONFIG_ENV_UBI_VOLUME_REDUND "u-boot-env-2"
 +# endif
 +#else
++# define CONFIG_SYS_REDUNDAND_ENVIRONMENT y
 +# if defined(CONFIG_ENV_OFFSET)
 +#  if CONFIG_ENV_OFFSET != MENDER_UBOOT_ENV_STORAGE_DEVICE_OFFSET_1
 +#   error CONFIG_ENV_OFFSET is not the same as MENDER_UBOOT_ENV_STORAGE_DEVICE_OFFSET_1. Either set it to the same value (check for example in the defconfig file), or make sure it is not defined at all. Make sure that: 1) All the instructions at docs.mender.io/devices/integrating-with-u-boot have been followed. 2) All required layers are included in bblayers.conf, including any board specific layers such as meta-mender-<board>

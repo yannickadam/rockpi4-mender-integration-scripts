@@ -1,0 +1,140 @@
+diff --git a/arch/arm/dts/rk3399-rock-pi-4.dts b/arch/arm/dts/rk3399-rock-pi-4.dts
+index 4a543f2117..255f1f9588 100644
+--- a/arch/arm/dts/rk3399-rock-pi-4.dts
++++ b/arch/arm/dts/rk3399-rock-pi-4.dts
+@@ -14,8 +14,13 @@
+ 	model = "Radxa ROCK Pi 4";
+ 	compatible = "radxa,rockpi4", "rockchip,rk3399";
+ 
++        aliases {
++                spi1 = "/spi@ff1d0000";
++        };
++
+ 	chosen {
+ 		stdout-path = "serial2:1500000n8";
++		u-boot,spl-boot-order = &sdmmc, &sdhci;
+ 	};
+ 
+ 	clkin_gmac: external-gmac-clock {
+@@ -395,6 +400,18 @@
+ 	};
+ };
+ 
++&spi1 {
++	#address-cells = <1>;
++        #size-cells = <0>;
++        status = "okay";
++        spidev {
++        	compatible = "spidev";
++                status = "okay";
++                reg = <0>;
++                spi-max-frequency = <10000000>;
++       };
++};
++
+ &i2c1 {
+ 	i2c-scl-rising-time-ns = <300>;
+ 	i2c-scl-falling-time-ns = <15>;
+diff --git a/configs/rock-pi-4-rk3399_defconfig b/configs/rock-pi-4-rk3399_defconfig
+index 0d86fdc895..7c3fa2e67e 100644
+--- a/configs/rock-pi-4-rk3399_defconfig
++++ b/configs/rock-pi-4-rk3399_defconfig
+@@ -19,7 +19,7 @@ CONFIG_CMD_BOOTZ=y
+ CONFIG_CMD_GPT=y
+ CONFIG_CMD_MMC=y
+ CONFIG_CMD_USB=y
+-# CONFIG_CMD_SETEXPR is not set
++CONFIG_CMD_SETEXPR=y
+ CONFIG_CMD_TIME=y
+ CONFIG_SPL_OF_CONTROL=y
+ CONFIG_DEFAULT_DEVICE_TREE="rk3399-rock-pi-4"
+@@ -56,3 +56,24 @@ CONFIG_USB_ETHER_RTL8152=y
+ CONFIG_USB_ETHER_SMSC95XX=y
+ CONFIG_SPL_TINY_MEMSET=y
+ CONFIG_ERRNO_STR=y
++
++CONFIG_DM_GPIO=y
++CONFIG_SPL_DM_SPI=y
++CONFIG_SPL_SPI_SUPPORT=y
++
++CONFIG_CMD_SPI=y
++CONFIG_DEFAULT_SPI_BUS=1
++CONFIG_DEFAULT_SPI_MODE=0x0
++
++CONFIG_DM_SPI_FLASH=y
++CONFIG_SPI_FLASH=y
++CONFIG_SF_DEFAULT_BUS=0
++CONFIG_SF_DEFAULT_CS=0
++CONFIG_SF_DEFAULT_MODE=3
++CONFIG_SF_DEFAULT_SPEED=1000000
++
++CONFIG_SPI=y
++CONFIG_DM_SPI=n
++CONFIG_SPI_MEM=y
++CONFIG_ROCKCHIP_SPI=y
++
+diff --git a/drivers/mmc/rockchip_dw_mmc.c b/drivers/mmc/rockchip_dw_mmc.c
+index a0e1be8794..66c56aef57 100644
+--- a/drivers/mmc/rockchip_dw_mmc.c
++++ b/drivers/mmc/rockchip_dw_mmc.c
+@@ -70,7 +70,12 @@ static int rockchip_dwmmc_ofdata_to_platdata(struct udevice *dev)
+ 
+ 	if (priv->fifo_depth < 0)
+ 		return -EINVAL;
+-	priv->fifo_mode = dev_read_bool(dev, "fifo-mode");
++
++#ifdef CONFIG_SPL_BUILD
++	priv->fifo_mode = true; // always force fifo mode
++#else
++        priv->fifo_mode = dev_read_bool(dev, "fifo-mode");
++#endif
+ 
+ #ifdef CONFIG_SPL_BUILD
+ 	if (!priv->fifo_mode)
+diff --git a/include/config_mender_defines.h b/include/config_mender_defines.h
+index 6a3dad76ff..045206fc37 100644
+--- a/include/config_mender_defines.h
++++ b/include/config_mender_defines.h
+@@ -12,7 +12,7 @@
+ #define MENDER_ROOTFS_PART_B_NUMBER 3
+ #define MENDER_ROOTFS_PART_B_NUMBER_HEX 3
+ #define MENDER_UBOOT_STORAGE_INTERFACE "mmc"
+-#define MENDER_UBOOT_STORAGE_DEVICE 0
++#define MENDER_UBOOT_STORAGE_DEVICE 1
+ 
+ /* BB variables. */
+ #define MENDER_STORAGE_DEVICE_BASE "/dev/mmcblk1p"
+diff --git a/include/configs/rk3399_common.h b/include/configs/rk3399_common.h
+index 89a8a44bbe..1906a78016 100644
+--- a/include/configs/rk3399_common.h
++++ b/include/configs/rk3399_common.h
+@@ -8,6 +8,10 @@
+ 
+ #include "rockchip-common.h"
+ 
++#undef CONFIG_ENV_OFFSET
++#define CONFIG_BOOTCOUNT_ENV
++#define CONFIG_BOOTCOUNT_LIMIT
++
+ #define CONFIG_SYS_CBSIZE		1024
+ #define CONFIG_SKIP_LOWLEVEL_INIT
+ 
+diff --git a/include/configs/rockchip-common.h b/include/configs/rockchip-common.h
+index b55e09a9ca..0cb7fe4722 100644
+--- a/include/configs/rockchip-common.h
++++ b/include/configs/rockchip-common.h
+@@ -14,11 +14,11 @@
+ 
+ #ifndef CONFIG_SPL_BUILD
+ 
+-/* First try to boot from SD (index 0), then eMMC (index 1) */
++/* First try to boot from SD (index 1), then eMMC (index 0) */
+ #if CONFIG_IS_ENABLED(CMD_MMC)
+ 	#define BOOT_TARGET_MMC(func) \
+-		func(MMC, mmc, 0) \
+-		func(MMC, mmc, 1)
++		func(MMC, mmc, 1) \
++		func(MMC, mmc, 0)
+ #else
+ 	#define BOOT_TARGET_MMC(func)
+ #endif
