@@ -55,6 +55,7 @@ git apply ../patches/0005-configs-rockpi4-add-Mender-support.patch
 if [ "$rockpi4_config" == "emmc" ]; then
     git apply ../patches/0006-RockPi4-eMMC-integration-for-Mender.patch
 fi
+git apply ../patches/0008-update-bootcount-and-spi.patch
 git apply ../patches/0010-enable-DT-overlay.patch
 git apply ../patches/0011-env-display-offset.patch
 git apply ../patches/0012-remove-wrong-env-dev.patch

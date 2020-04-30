@@ -1,0 +1,17 @@
+diff --git a/include/configs/rk3399_common.h b/include/configs/rk3399_common.h
+index 89a8a44bbe..bb4519a2f7 100644
+--- a/include/configs/rk3399_common.h
++++ b/include/configs/rk3399_common.h
+@@ -8,6 +8,12 @@
+ 
+ #include "rockchip-common.h"
+ 
++#undef CONFIG_ENV_OFFSET
++#define CONFIG_BOOTCOUNT_ENV
++#define CONFIG_BOOTCOUNT_LIMIT
++
++#define MAX_SPI_BYTES                   1024
++
+ #define CONFIG_SYS_CBSIZE		1024
+ #define CONFIG_SKIP_LOWLEVEL_INIT
+ 
