@@ -1,15 +1,5 @@
-From ddff37fe8574aaf0688c106f1b8172349b9e4129 Mon Sep 17 00:00:00 2001
-From: Mirza Krak <mirza.krak@northern.tech>
-Date: Mon, 1 Jul 2019 10:54:43 +0000
-Subject: [PATCH 6/6] RockPro64 eMMC integration for Mender
-
-Signed-off-by: Mirza Krak <mirza.krak@northern.tech>
----
- include/config_mender_defines.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
 diff --git a/include/config_mender_defines.h b/include/config_mender_defines.h
-index 9e9b91760a..6a3dad76ff 100644
+index 5bcfdea1f0..2dd7993f41 100644
 --- a/include/config_mender_defines.h
 +++ b/include/config_mender_defines.h
 @@ -12,14 +12,14 @@
@@ -31,6 +21,3 @@ index 9e9b91760a..6a3dad76ff 100644
  
  /* For sanity checks. */
  #define MENDER_BOOTENV_SIZE 0x8000
--- 
-2.11.0
-

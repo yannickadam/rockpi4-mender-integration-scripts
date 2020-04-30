@@ -53,9 +53,8 @@ git apply ../patches/0005-configs-rockpi4-add-Mender-support.patch
 # Comment below if you would like to generate binaries suitable for booting
 # from SD card instead of eMMC
 if [ "$rockpi4_config" == "emmc" ]; then
-    git am ../patches/0006-RockPi4-eMMC-integration-for-Mender.patch
+    git apply ../patches/0006-RockPi4-eMMC-integration-for-Mender.patch
 fi
-git apply ../patches/0007-RockPi4-boot-order.patch
 git apply ../patches/0010-enable-DT-overlay.patch
 git apply ../patches/0011-env-display-offset.patch
 git apply ../patches/0012-remove-wrong-env-dev.patch
@@ -72,8 +71,8 @@ make envtools
 # dd if=u-boot.itb of=rockpi4-uboot.img seek=16384 conv=notrunc
 
 # Code to work with mender-convert
-dd if=idbloader.img of=rockpi4-uboot.img seek=0 conv=notrunc
-dd if=u-boot.itb of=rockpi4-uboot.img seek=16320 conv=notrunc
+dd if=idbloader.img of=rksd_loader.img seek=0 conv=notrunc
+dd if=u-boot.itb of=rksd_loader.img seek=16320 conv=notrunc
 
 # This script is copied from an stock Armbian image and has been modified
 # slightly to work with Mender.
